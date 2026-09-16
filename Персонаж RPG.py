@@ -1,10 +1,13 @@
+import random
+monsters = ["волк", "гоблин", "дракон", "трупоед", "кикимора"]
+
 player1 = {
     "name": "Воин",
     "level": 1,
     "health": 100,
     "gold": 150,
     "weapon": "Меч",
-    "inventory": ["Меч", "Щит", "Лук"]
+    "inventory": ["меч", "щит", "лук"]
 }
 shop = {
     "зелье": 30,
@@ -64,15 +67,47 @@ def sell_item(player, item, shop):
         print("Такого предмета нет.")
 
 def quest(player):
-    if player["health"] <= 30:
-        print("Мало здоровья, вам нужно зелье.")
-    else:
+
         print("Вы отпавились в лес")
-        print("Вы победили монстра")
-        player["health"] -= 10
-        add_gold(player, 50)
-        print("Вы потеряли 10 здоровья")
-        print("Вы получили 50 золота")
+        monster = random.choice(monsters)
+        if monster == "волк":
+               damage = 10
+        elif monster == "гоблин":
+               damage = 15
+        elif monster == "дракон":
+               damage = 25
+        elif monster == "трупоед":
+               damage = 17
+        else:
+               damage = 20
+        print("Вы встретили", monster)
+        player["health"] -= damage
+        if player["health"] <= 0:
+            print("Смерть :(")
+            return False
+        else:
+            add_gold(player, 50)
+            print("Вы победили монстра")
+            print("Вы получили 50 золота")
+        print("Вы потеряли", damage, "здоровья")
+
+
+def use_item(player):
+    item = input("Ввкдите предмет: ").lower()
+    if item in player["inventory"]:
+        if item == "зелье":
+            player["health"] = min(100, player["health"] + 20)
+            player["inventory"].remove(item)
+            print("Вы выпили зелье")
+            print("Здоровье: ", player["health"])
+        elif item != "зелье":
+            print("Нельзя использовать!")
+
+
+    else:
+            print("Такого нет")
+
+
 
 
 
@@ -82,7 +117,8 @@ while True:
     print("3. Купить предмет: ")
     print("4. Продать предмет: ")
     print("5. Пройти квест: ")
-    print("6. Выйти")
+    print("6. Исаользовать предмет: ")
+    print("7. Выйти")
     answer = int(input("Выберите действие: "))
     if answer == 1:
         show_player(player1)
@@ -95,7 +131,11 @@ while True:
         item = input("Какой предмет продать? ").lower()
         sell_item(player1, item, shop)
     elif answer == 5:
-        quest(player1)
+        result = quest(player1)
+        if result == False:
+            break
+    elif answer == 6:
+        use_item(player1)
 
 
 
