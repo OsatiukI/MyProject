@@ -62,12 +62,27 @@ def sell_item(player, item, shop):
         print("Предмет :", item, "успешно продан.")
     else:
         print("Такого предмета нет.")
+
+def quest(player):
+    if player["health"] <= 30:
+        print("Мало здоровья, вам нужно зелье.")
+    else:
+        print("Вы отпавились в лес")
+        print("Вы победили монстра")
+        player["health"] -= 10
+        add_gold(player, 50)
+        print("Вы потеряли 10 здоровья")
+        print("Вы получили 50 золота")
+
+
+
 while True:
     print("1. Показать персонажа:")
     print("2. Показать магазин: ")
     print("3. Купить предмет: ")
     print("4. Продать предмет: ")
-    print("5. Выйти")
+    print("5. Пройти квест: ")
+    print("6. Выйти")
     answer = int(input("Выберите действие: "))
     if answer == 1:
         show_player(player1)
@@ -79,7 +94,8 @@ while True:
     elif answer == 4:
         item = input("Какой предмет продать? ").lower()
         sell_item(player1, item, shop)
-
+    elif answer == 5:
+        quest(player1)
 
 
 
