@@ -5,7 +5,9 @@ player1 = {
     "name": "Воин",
     "level": 1,
     "health": 100,
+    "max_health": 100,
     "gold": 150,
+    "xp": 0,
     "weapon": None,
     "inventory": ["меч", "щит", "лук"],
     "armor": None,
@@ -30,17 +32,29 @@ weapons = {
     "лук": 40,
 }
 monsters_data = {
-    "волк": {"health": 50, "damage": 10},
-    "гоблин": {"health": 60, "damage": 15},
-    "дракон": {"health": 150, "damage": 25},
-    "трупоед": {"health": 100, "damage": 17},
-    "кикимора": {"health": 110, "damage": 20}
+    "волк": {"health": 50, "damage": 10, "xp": 5},
+    "гоблин": {"health": 60, "damage": 15, "xp": 10},
+    "дракон": {"health": 150, "damage": 25, "xp": 20},
+    "трупоед": {"health": 100, "damage": 17, "xp": 15},
+    "кикимора": {"health": 110, "damage": 20, "xp": 15}
 }
 armor = {
     "шлем": 10,
     "броня": 50,
     "щит": 15
 }
+def add_xp(player, amount):
+    player["xp"] += amount
+    while True:
+       if player["xp"] >= 100:
+          player["level"] += 1
+          player["max_health"] += 20
+          player["health"] = player["max_health"]
+          print("Новый уровень: ", player["level"])
+          player["xp"] -= 100
+       elif player["xp"] < 100:
+           break
+
 def show_shop(shop):
     for item, price in shop.items():
         print(item, "-", price, "золота")
@@ -53,6 +67,7 @@ def show_player(player):
     print("Количество золота: ", player["gold"])
     print("Тип оружия: ", player["weapon"])
     print("Броня: ", player["armor"])
+    print("Колтчество опыта: ", player["xp"])
     print("Инвентарь:")
     for number, item in enumerate(player["inventory"], 1):
         print(number, item)
@@ -106,6 +121,7 @@ def quest(player):
         monster_stats = monsters_data[monster]
         monster_health = monster_stats["health"]
         monster_damage = monster_stats["damage"]
+        monster_xp = monster_stats["xp"]
         while True:
             monster_health -= player_damage
             print("Вы атаковали: ", player_damage)
@@ -126,8 +142,10 @@ def quest(player):
 
 
         add_gold(player, 50)
+        add_xp(player, monster_xp)
         print("Вы победили монстра")
         print("Вы получили 50 золота")
+        print("Вы получили опты: ", monster_xp)
 
 
 
@@ -135,12 +153,12 @@ def use_item(player):
     item = input("Ввкдите предмет: ").lower()
     if item in player["inventory"]:
         if item == "зелье":
-            player["health"] = min(100, player["health"] + 20)
+            player["health"] = min(player["max_health"], player["health"] + 20)
             player["inventory"].remove(item)
             print("Вы выпили зелье")
             print("Здоровье: ", player["health"])
         elif item == "большое зелье":
-            player["health"] = min(100, player["health"] + 35)
+            player["health"] = min(player["max_health"], player["health"] + 20)
             player["inventory"].remove(item)
             print("Вы выпили зелье")
             print("Здоровье: ", player["health"])
@@ -170,7 +188,11 @@ while True:
     print("5. Пройти квест: ")
     print("6. Исаользовать предмет: ")
     print("7. Выйти")
-    answer = int(input("Выберите действие: "))
+    try:
+        answer = int(input("Выберите действие: "))
+    except ValueError:
+        print("Ошибка!")
+        continue
     if answer == 1:
         show_player(player1)
     elif answer == 2:
@@ -187,6 +209,10 @@ while True:
             break
     elif answer == 6:
         use_item(player1)
+    elif answer == 7:
+        break
+    else:
+        print("Такого дествия нет!")
 
 
 
