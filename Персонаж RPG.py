@@ -7,7 +7,8 @@ player1 = {
     "health": 100,
     "gold": 150,
     "weapon": None,
-    "inventory": ["меч", "щит", "лук"]
+    "inventory": ["меч", "щит", "лук"],
+    "armor": None,
 }
 shop = {
     "зелье": 30,
@@ -28,6 +29,18 @@ weapons = {
     "булава": 65,
     "лук": 40,
 }
+monsters_data = {
+    "волк": {"health": 50, "damage": 10},
+    "гоблин": {"health": 60, "damage": 15},
+    "дракон": {"health": 150, "damage": 25},
+    "трупоед": {"health": 100, "damage": 17},
+    "кикимора": {"health": 110, "damage": 20}
+}
+armor = {
+    "шлем": 10,
+    "броня": 50,
+    "щит": 15
+}
 def show_shop(shop):
     for item, price in shop.items():
         print(item, "-", price, "золота")
@@ -39,6 +52,7 @@ def show_player(player):
     print("Здоровье: ", player["health"])
     print("Количество золота: ", player["gold"])
     print("Тип оружия: ", player["weapon"])
+    print("Броня: ", player["armor"])
     print("Инвентарь:")
     for number, item in enumerate(player["inventory"], 1):
         print(number, item)
@@ -71,6 +85,8 @@ def sell_item(player, item, shop):
         player["gold"] += price
         player["inventory"].remove(item)
         print("Предмет :", item, "успешно продан.")
+        if player["armor"] == item:
+            player["armor"] = None
     else:
         print("Такого предмета нет.")
 
@@ -81,89 +97,38 @@ def quest(player):
             player_damage = 5
         else:
             player_damage = weapons[player["weapon"]]
+        if player["armor"] == None:
+            player_defense = 0
+        else:
+            player_defense = armor[player["armor"]]
         monster = random.choice(monsters)
         print("Вы встретили", monster)
-        if monster == "волк":
-            monster_health = 50
-            monster_damage = 10
+        monster_stats = monsters_data[monster]
+        monster_health = monster_stats["health"]
+        monster_damage = monster_stats["damage"]
+        while True:
+            monster_health -= player_damage
+            print("Вы атаковали: ", player_damage)
+            print("Здоровье монстра: ", monster_health)
 
-            while True:
-                monster_health -= player_damage
-                if monster_health > 0:
-                    player["health"] -= monster_damage
+            if monster_health <= 0:
+                print("Монстер отправился в Валхалу")
+                break
+            else:
+                damage_taken = max(0, monster_damage - player_defense)
+                player["health"] -= damage_taken
+                print("Атака монстра: ", monster_damage)
+                print("Ваше здоровье: ", player["health"], "Защита брони: ", player_defense)
+                if player["health"] <= 0:
+                    print("Смерть :(")
+                    return False
 
-                    if player["health"] <= 0:
-                        print("Смерть :(")
-                        return False
-                else:
-                    print("Монстр погиб")
-                    break
-        elif monster == "гоблин":
-            monster_health = 60
-            monster_damage = 15
-
-            while True:
-                monster_health -= player_damage
-                if monster_health > 0:
-                    player["health"] -= monster_damage
-
-                    if player["health"] <= 0:
-                        print("Смерть :(")
-                        return False
-                else:
-                    print("Монстр погиб")
-                    break
-        elif monster == "дракон":
-            monster_health = 150
-            monster_damage = 25
-
-            while True:
-                monster_health -= player_damage
-                if monster_health > 0:
-                    player["health"] -= monster_damage
-
-                    if player["health"] <= 0:
-                        print("Смерть :(")
-                        return False
-                else:
-                    print("Монстр погиб")
-                    break
-        elif monster == "трупоед":
-            monster_health = 100
-            monster_damage = 17
-
-            while True:
-                monster_health -= player_damage
-                if monster_health > 0:
-                    player["health"] -= monster_damage
-
-                    if player["health"] <= 0:
-                        print("Смерть :(")
-                        return False
-                else:
-                    print("Монстр погиб")
-                    break
-        else:
-            monster_health = 110
-            monster_damage = 20
-
-            while True:
-                monster_health -= player_damage
-                if monster_health > 0:
-                    player["health"] -= monster_damage
-
-                    if player["health"] <= 0:
-                        print("Смерть :(")
-                        return False
-                else:
-                    print("Монстр погиб")
-                    break
 
 
         add_gold(player, 50)
         print("Вы победили монстра")
         print("Вы получили 50 золота")
-        print("Вы потеряли", monster_damage, "здоровья")
+
 
 
 def use_item(player):
@@ -174,9 +139,17 @@ def use_item(player):
             player["inventory"].remove(item)
             print("Вы выпили зелье")
             print("Здоровье: ", player["health"])
+        elif item == "большое зелье":
+            player["health"] = min(100, player["health"] + 35)
+            player["inventory"].remove(item)
+            print("Вы выпили зелье")
+            print("Здоровье: ", player["health"])
         elif item in weapons:
             player["weapon"] = item
             print("Экипировано оружие: ", item)
+        elif item in armor:
+            player["armor"] = item
+            print("Экипировано: ", item)
 
         elif item != "зелье":
             print("Нельзя использовать!")
