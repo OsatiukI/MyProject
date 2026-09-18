@@ -45,22 +45,22 @@ room_items = {
     }
 }
 suspects = {
-    "Мария" : {
+    "мария" : {
         "role": "Служанка",
         "alibi": "Убиралась на кухне",
         "description": "Немного нервничает"
     },
-    "Игорь": {
+    "игорь": {
         "role": "Племяник",
         "alibi": "Читал книгу в гостиной",
-        "description": "Ведёт себя саокойно"
+        "description": "Ведёт себя спокойно"
     },
-    "Виктор": {
+    "виктор": {
         "role": "Охраник",
         "alibi": "Патрулировал территорию снаружи",
         "description": "Уверено отвечает на вопросы"
     },
-    "Елена": {
+    "елена": {
         "role": "Гостья",
         "alibi": "Разговаривала по телефону на террасе",
         "description": "Избегает зрительного контакта"
@@ -78,6 +78,34 @@ def show_room_items(room_items):
             print(room_items[item]["description"])
         else:
             print("Такой улики нет!")
+
+def grew_up(suspects):
+         print("Кого ты хочешь допросить?")
+         for suspect in suspects :
+            print(suspect)
+         suspect = input("Скажи кого вызвать на допрос?: ").lower()
+         if suspect in suspects:
+             print("Кто ты? Я", suspects[suspect]["role"])
+             print("Где ты был в момент нападения? Я", suspects[suspect]["alibi"])
+             print("Поведение подозреваемого: ", suspects[suspect]["description"])
+         else:
+             print("Такого подозреваемого нет!")
+
+def who_thief(suspects):
+    print("Кто виновен?")
+    suspect = input("Твой выбор: ").lower()
+
+    if suspect == "виктор":
+        print("Ты нашел вора")
+        return True
+    else:
+        print("Это не он!")
+        return False
+
+
+
+
+
 
 print("Добро пожаловать в детективную историю!")
 print()
@@ -107,5 +135,15 @@ while True:
        continue
     if answer == 1:
        examine_room(room_items)
-    if answer == 2:
+    elif answer == 2:
         show_room_items(room_items)
+    elif answer == 3:
+        grew_up(suspects)
+    elif answer == 4:
+        result = who_thief(suspects)
+        if result == False:
+            continue
+        else:
+            break
+    else:
+        break
