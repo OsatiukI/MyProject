@@ -25,18 +25,18 @@ shop = {
     "булава": 150
 }
 weapons = {
-    "меч": 50,
-    "топор": 60,
-    "посох": 55,
-    "булава": 65,
-    "лук": 40,
+    "меч": {"damage": 50, "critical_hit_chance": 10, "miss_chance": 5},
+    "топор": {"damage": 60, "critical_hit_chance": 2, "miss_chance": 15},
+    "посох": {"damage": 55, "critical_hit_chance": 7, "miss_chance": 8},
+    "булава": {"damage": 65, "critical_hit_chance": 3, "miss_chance": 15},
+    "лук": {"damage": 40, "critical_hit_chance": 20, "miss_chance": 30},
 }
 monsters_data = {
-    "волк": {"health": 50, "damage": 10, "xp": 5},
-    "гоблин": {"health": 60, "damage": 15, "xp": 10},
-    "дракон": {"health": 150, "damage": 25, "xp": 20},
-    "трупоед": {"health": 100, "damage": 17, "xp": 15},
-    "кикимора": {"health": 110, "damage": 20, "xp": 15}
+    "волк": {"health": 50, "damage": 10, "xp": 5, "gold": 10, "miss_chance": 5, "critical_hit_chance_m": 20},
+    "гоблин": {"health": 60, "damage": 15, "xp": 10, "gold": 15, "miss_chance": 7, "critical_hit_chance_m": 15},
+    "дракон": {"health": 150, "damage": 25, "xp": 20, "gold": 50, "miss_chance": 30, "critical_hit_chance_m": 5},
+    "трупоед": {"health": 100, "damage": 17, "xp": 15, "gold": 40, "miss_chance": 10, "critical_hit_chance_m": 10},
+    "кикимора": {"health": 110, "damage": 20, "xp": 15, "gold": 30, "miss_chance": 15, "critical_hit_chance_m": 12}
 }
 armor = {
     "шлем": 10,
@@ -108,10 +108,6 @@ def sell_item(player, item, shop):
 def quest(player):
 
         print("Вы отпавились в лес")
-        if player["weapon"] == None:
-            player_damage = 5
-        else:
-            player_damage = weapons[player["weapon"]]
         if player["armor"] == None:
             player_defense = 0
         else:
@@ -122,29 +118,59 @@ def quest(player):
         monster_health = monster_stats["health"]
         monster_damage = monster_stats["damage"]
         monster_xp = monster_stats["xp"]
+        monster_gold = monster_stats["gold"]
         while True:
+            if player["weapon"] == None:
+                player_damage = 5
+            else:
+                miss_chance = weapons[player["weapon"]]["miss_chance"]
+
+                if random.randint(1, 100) <= miss_chance:
+                    player_damage = 0
+                    print("Промах!")
+                else:
+                    base_damage = weapons[player["weapon"]]["damage"]
+                    player_damage = random.randint(int(base_damage * 0.8), base_damage)
+
+                    critical_chance = weapons[player["weapon"]]["critical_hit_chance"]
+
+                    if random.randint(1, 100) <= critical_chance:
+                        player_damage *= 2
+                        print("Критический удар!")
             monster_health -= player_damage
             print("Вы атаковали: ", player_damage)
             print("Здоровье монстра: ", monster_health)
-
             if monster_health <= 0:
                 print("Монстер отправился в Валхалу")
                 break
             else:
-                damage_taken = max(0, monster_damage - player_defense)
+                miss_chance_m = monsters_data[monster]["miss_chance"]
+                if random.randint(1, 100) <= miss_chance_m:
+                      print("Монстр промахнулся")
+                      damage_taken = 0
+                else:
+                    base_damage_m = monsters_data[monster]["damage"]
+                    monster_damage = random.randint(int(base_damage_m * 0.8), base_damage_m)
+                    critical_chance_m = monsters_data[monster]["critical_hit_chance_m"]
+                    if random.randint(1, 100) <= critical_chance_m:
+                        monster_damage *= 2
+                        print("Критический удар!", monster_damage)
+                    damage_taken = max(0, monster_damage - player_defense)
+
+
                 player["health"] -= damage_taken
-                print("Атака монстра: ", monster_damage)
+                print("Атака монстра: ", damage_taken)
                 print("Ваше здоровье: ", player["health"], "Защита брони: ", player_defense)
                 if player["health"] <= 0:
-                    print("Смерть :(")
-                    return False
+                   print("Смерть :(")
+                   return False
 
 
 
-        add_gold(player, 50)
+        add_gold(player, monster_gold)
         add_xp(player, monster_xp)
         print("Вы победили монстра")
-        print("Вы получили 50 золота")
+        print("Вы получили" , monster_gold , "золота")
         print("Вы получили опты: ", monster_xp)
 
 
