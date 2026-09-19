@@ -25,18 +25,18 @@ shop = {
     "булава": 150
 }
 weapons = {
-    "меч": {"damage": 50, "critical_hit_chance": 10, "miss_chance": 5},
-    "топор": {"damage": 60, "critical_hit_chance": 2, "miss_chance": 15},
-    "посох": {"damage": 55, "critical_hit_chance": 7, "miss_chance": 8},
-    "булава": {"damage": 65, "critical_hit_chance": 3, "miss_chance": 15},
-    "лук": {"damage": 40, "critical_hit_chance": 20, "miss_chance": 30},
+    "меч": {"damage": 20, "critical_hit_chance": 10, "miss_chance": 5, "durability": 100},
+    "топор": {"damage": 25, "critical_hit_chance": 2, "miss_chance": 15, "durability": 100},
+    "посох": {"damage": 27, "critical_hit_chance": 7, "miss_chance": 8, "durability": 100},
+    "булава": {"damage": 30, "critical_hit_chance": 3, "miss_chance": 15, "durability": 100},
+    "лук": {"damage": 35, "critical_hit_chance": 20, "miss_chance": 30, "durability": 100},
 }
 monsters_data = {
     "волк": {"health": 50, "damage": 10, "xp": 5, "gold": 10, "miss_chance": 5, "critical_hit_chance_m": 20},
     "гоблин": {"health": 60, "damage": 15, "xp": 10, "gold": 15, "miss_chance": 7, "critical_hit_chance_m": 15},
-    "дракон": {"health": 150, "damage": 25, "xp": 20, "gold": 50, "miss_chance": 30, "critical_hit_chance_m": 5},
-    "трупоед": {"health": 100, "damage": 17, "xp": 15, "gold": 40, "miss_chance": 10, "critical_hit_chance_m": 10},
-    "кикимора": {"health": 110, "damage": 20, "xp": 15, "gold": 30, "miss_chance": 15, "critical_hit_chance_m": 12}
+    "дракон": {"health": 90, "damage": 25, "xp": 20, "gold": 50, "miss_chance": 30, "critical_hit_chance_m": 5},
+    "трупоед": {"health": 80, "damage": 17, "xp": 15, "gold": 40, "miss_chance": 10, "critical_hit_chance_m": 10},
+    "кикимора": {"health": 85, "damage": 20, "xp": 15, "gold": 30, "miss_chance": 15, "critical_hit_chance_m": 12}
 }
 armor = {
     "шлем": 10,
@@ -131,12 +131,24 @@ def quest(player):
                 else:
                     base_damage = weapons[player["weapon"]]["damage"]
                     player_damage = random.randint(int(base_damage * 0.8), base_damage)
+                    weapons[player["weapon"]]["durability"] -= random.randint(1, 5)
+                    #crash_weapon = crash_weapons - random.randint(1, 5)
+                    if weapons[player["weapon"]]["durability"] <= 0:
+                        player["inventory"].remove(player["weapon"])
+                        player["weapon"] = None
+                        print("Оружие сломалось: ")
+                        continue
+                        #print("Оружие сломалось: ")
+
+                    else:
+                        print("Прочность оружия: ", weapons[player["weapon"]]["durability"])
 
                     critical_chance = weapons[player["weapon"]]["critical_hit_chance"]
 
                     if random.randint(1, 100) <= critical_chance:
                         player_damage *= 2
                         print("Критический удар!")
+
             monster_health -= player_damage
             print("Вы атаковали: ", player_damage)
             print("Здоровье монстра: ", monster_health)
