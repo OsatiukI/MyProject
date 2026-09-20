@@ -66,6 +66,7 @@ def show_player(player):
     print("Здоровье: ", player["health"])
     print("Количество золота: ", player["gold"])
     print("Тип оружия: ", player["weapon"])
+    #print("прочность:" f"{weapons[player['weapon']]['durability']} из 100",)
     print("Броня: ", player["armor"])
     print("Колтчество опыта: ", player["xp"])
     print("Инвентарь:")
@@ -214,6 +215,36 @@ def use_item(player):
     else:
             print("Такого нет")
 
+def blacksmit(player):
+    print("Добро пожаловать в мою кузницу, странник!")
+    print("Принеси своё оружие — я осмотрю его и скажу, сколько будет стоить ремонт.")
+    print("Если цена тебя устроит — верну твоему оружию прежнюю прочность!")
+    if player["weapon"] == None:
+        print("Оружие не выбрано")
+    else:
+       repair_weapon_price = round((100 - weapons[player["weapon"]]["durability"]) * 0.3)
+       if player["gold"] < repair_weapon_price:
+         print("Незватает золота!")
+
+       else:
+           print("Ремонт вашего оружия будет стоить ", repair_weapon_price,"золота. Согласны?")
+           print("Да или Нет")
+           answer = input("Ваше рещение: ").lower()
+           if answer == "да":
+               player["gold"] -= repair_weapon_price
+               weapons[player["weapon"]]["durability"] = 100
+               print("Вы потратили ", repair_weapon_price, "на ремонт")
+               print("Прочность оружия: ", weapons[player["weapon"]]["durability"])
+           elif answer == "нет":
+                return
+           else:
+               print("Такой выбор не допустим")
+               return
+
+
+
+
+
 
 
 
@@ -225,7 +256,8 @@ while True:
     print("4. Продать предмет: ")
     print("5. Пройти квест: ")
     print("6. Использовать предмет: ")
-    print("7. Выйти")
+    print("7. Кузнец")
+    print("8. Выйти")
     try:
         answer = int(input("Выберите действие: "))
     except ValueError:
@@ -248,6 +280,8 @@ while True:
     elif answer == 6:
         use_item(player1)
     elif answer == 7:
+        blacksmit(player1)
+    elif answer == 8:
         break
     else:
         print("Такого дествия нет!")
