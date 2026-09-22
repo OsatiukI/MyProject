@@ -1,6 +1,6 @@
 while True:
     num_first = float(input("Введите первое число: "))
-    operator = input("Введите операцию (+, -, *, /, history): ")
+    operator = input("Введите операцию (+, -, *, /): ")
     num_second = float(input("Введите второе число: "))
 
     if operator == "+":
