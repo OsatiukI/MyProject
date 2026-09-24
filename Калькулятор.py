@@ -5,20 +5,16 @@ while True:
 
     if operator == "+":
       result = num_first+ num_second
-      print(result)
-      continue
     elif operator == "-":
       result = num_first - num_second
-      print(result)
-      continue
     elif operator == "*":
       result = num_first * num_second
-      print(result)
-      continue
     elif operator == "/":
-      result = num_first / num_second
-      print(result)
-      continue
+        if num_second == 0:
+            print("На ноль делить нельзя!")
+            continue
+        result = num_first / num_second
     else:
-      print("Неизвестная операция")
-      continue
+        print("Неизвестная операция")
+        continue
+    print(result)
