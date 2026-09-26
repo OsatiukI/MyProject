@@ -1,6 +1,27 @@
 import random
 monsters = ["волк", "гоблин", "дракон", "трупоед", "кикимора"]
 
+class player:
+    def __init__(self):
+        self.name = ""
+        self.health = 100
+        self.gold = 150
+        self.xp = 0
+        self.weapon = None
+        self.armor = None
+        self.inventory = []
+        self.max_health = 100
+        self.level = 1
+
+    def show_health(self):
+        print(self.health)
+    def show_gold(self):
+        print(self.gold)
+player1 = player()
+player1.name = input("Введите имя героя: ")
+
+
+
 player1 = {
     "name": "Воин",
     "level": 1,
