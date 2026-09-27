@@ -1,6 +1,5 @@
 import random
 monsters = ["волк", "гоблин", "дракон", "трупоед", "кикимора"]
-
 class player:
     def __init__(self):
         self.name = ""
@@ -17,22 +16,89 @@ class player:
         print(self.health)
     def show_gold(self):
         print(self.gold)
+    def show_player(self):
+        print("Имя:", self.name)
+        print("Уровень:", self.level)
+        print("Здоровье:", self.health, "/", self.max_health)
+        print("Количество золота:", self.gold)
+        print("Оружие:", self.weapon)
+        print("Броня:", self.armor)
+        print("Количество опыта:", self.xp)
+
+        print("Инвентарь:")
+        for number, item in enumerate(self.inventory, 1):
+            print(number, item)
+    def buy_item(self, item, shop):
+        if item in shop:
+            price = shop[item]
+            if self.gold >= price: #player["gold"]
+                self.gold -= price
+                self.inventory .append(item)
+                print("Предмет: ", item, "успешно добавлен")
+            elif self.gold < price:
+                print("Нехватает золота!")
+        else:
+            print("Такого предмета нет!")
+
+    def add_gold(self, amount):
+        self.gold += amount
+        print("Золото добавлено: ", self.gold)
+
+    def add_xp(self, amount):
+        self.xp += amount
+        while True:
+            if self.xp >= 100:
+                self.level += 1
+                self.max_health += 20
+                self.health = self.max_health
+                print("Новый уровень: ", self.level)
+                self.xp -= 100
+            elif self.xp < 100:
+                break
+
+    def sell_item(self, item, shop):
+        if item in self.inventory:
+            price = shop[item] / 2
+            self.gold += price
+            self.inventory.remove(item)
+            print("Предмет :", item, "успешно продан.")
+            if self.armor == item:
+                self.armor = None
+        else:
+            print("Такого предмета нет.")
+
+    def use_item(self, weapons, armor):
+        item = input("Введите предмет: ").lower()
+
+        if item in self.inventory:
+            if item == "зелье":
+                self.health = min(self.max_health, self.health + 20)
+                self.inventory.remove(item)
+                print("Вы выпили зелье")
+                print("Здоровье:", self.health)
+
+            elif item == "большое зелье":
+                self.health = min(self.max_health, self.health + 40)
+                self.inventory.remove(item)
+                print("Вы выпили большое зелье")
+                print("Здоровье:", self.health)
+
+            elif item in weapons:
+                self.weapon = item
+                print("Экипировано оружие:", item)
+
+            elif item in armor:
+                self.armor = item
+                print("Экипировано:", item)
+
+            else:
+                print("Нельзя использовать!")
+
+        else:
+            print("Такого нет")
 player1 = player()
 player1.name = input("Введите имя героя: ")
 
-
-
-player1 = {
-    "name": "Воин",
-    "level": 1,
-    "health": 100,
-    "max_health": 100,
-    "gold": 150,
-    "xp": 0,
-    "weapon": None,
-    "inventory": ["меч", "щит", "лук"],
-    "armor": None,
-}
 shop = {
     "зелье": 30,
     "большое зелье": 60,
@@ -64,39 +130,10 @@ armor = {
     "броня": 50,
     "щит": 15
 }
-def add_xp(player, amount):
-    player["xp"] += amount
-    while True:
-       if player["xp"] >= 100:
-          player["level"] += 1
-          player["max_health"] += 20
-          player["health"] = player["max_health"]
-          print("Новый уровень: ", player["level"])
-          player["xp"] -= 100
-       elif player["xp"] < 100:
-           break
 
 def show_shop(shop):
     for item, price in shop.items():
         print(item, "-", price, "золота")
-
-
-def show_player(player):
-    print("Имя:", player["name"])
-    print("Уровень: ", player["level"])
-    print("Здоровье: ", player["health"])
-    print("Количество золота: ", player["gold"])
-    print("Тип оружия: ", player["weapon"])
-    #print("прочность:" f"{weapons[player['weapon']]['durability']} из 100",)
-    print("Броня: ", player["armor"])
-    print("Колтчество опыта: ", player["xp"])
-    print("Инвентарь:")
-    for number, item in enumerate(player["inventory"], 1):
-        print(number, item)
-
-def add_gold(player, amount):
-    player["gold"] += amount
-    print("Золото добавлено: ", player["gold"])
 
 def spend_gold(player, amount):
     if player["gold"] >= amount:
@@ -104,36 +141,13 @@ def spend_gold(player, amount):
     else:
         print(" Не хватает денег!")
 
-def buy_item(player, item, shop):
-    if item in shop:
-        price = shop[item]
-        if player["gold"] >= price:
-            player["gold"] -= price
-            player["inventory"] .append(item)
-            print("Предмет: ", item, "успешно добавлен")
-        elif player["gold"] < price:
-            print("Нехватает золота!")
-    else:
-        print("Такого предмета нет!")
-
-def sell_item(player, item, shop):
-    if item in player["inventory"]:
-        price = shop[item] / 2
-        player["gold"] += price
-        player["inventory"].remove(item)
-        print("Предмет :", item, "успешно продан.")
-        if player["armor"] == item:
-            player["armor"] = None
-    else:
-        print("Такого предмета нет.")
-
 def quest(player):
 
         print("Вы отпавились в лес")
-        if player["armor"] == None:
+        if player.armor is None:
             player_defense = 0
         else:
-            player_defense = armor[player["armor"]]
+            player_defense = armor[player.armor]
         monster = random.choice(monsters)
         print("Вы встретили", monster)
         monster_stats = monsters_data[monster]
@@ -142,30 +156,30 @@ def quest(player):
         monster_xp = monster_stats["xp"]
         monster_gold = monster_stats["gold"]
         while True:
-            if player["weapon"] == None:
+            if player.weapon == None:
                 player_damage = 5
             else:
-                miss_chance = weapons[player["weapon"]]["miss_chance"]
+                miss_chance = weapons[player.weapon]["miss_chance"]
 
                 if random.randint(1, 100) <= miss_chance:
                     player_damage = 0
                     print("Промах!")
                 else:
-                    base_damage = weapons[player["weapon"]]["damage"]
+                    base_damage = weapons[player.weapon]["damage"]
                     player_damage = random.randint(int(base_damage * 0.8), base_damage)
-                    weapons[player["weapon"]]["durability"] -= random.randint(1, 5)
+                    weapons[player.weapon]["durability"] -= random.randint(1, 5)
                     #crash_weapon = crash_weapons - random.randint(1, 5)
-                    if weapons[player["weapon"]]["durability"] <= 0:
-                        player["inventory"].remove(player["weapon"])
-                        player["weapon"] = None
+                    if weapons[player.weapon]["durability"] <= 0:
+                        player.inventory.remove(player.weapon)
+                        player.weapon = None
                         print("Оружие сломалось: ")
                         continue
-                        #print("Оружие сломалось: ")
+
 
                     else:
-                        print("Прочность оружия: ", weapons[player["weapon"]]["durability"])
+                        print("Прочность оружия: ", weapons[player.weapon]["durability"])
 
-                    critical_chance = weapons[player["weapon"]]["critical_hit_chance"]
+                    critical_chance = weapons[player.weapon]["critical_hit_chance"]
 
                     if random.randint(1, 100) <= critical_chance:
                         player_damage *= 2
@@ -192,59 +206,29 @@ def quest(player):
                     damage_taken = max(0, monster_damage - player_defense)
 
 
-                player["health"] -= damage_taken
+                player.health -= damage_taken
                 print("Атака монстра: ", damage_taken)
-                print("Ваше здоровье: ", player["health"], "Защита брони: ", player_defense)
-                if player["health"] <= 0:
+                print("Ваше здоровье: ", player.health, "Защита брони: ", player_defense)
+                if player.health <= 0:
                    print("Смерть :(")
                    return False
 
-
-
-        add_gold(player, monster_gold)
-        add_xp(player, monster_xp)
+        player.add_gold(monster_gold)
+        player.add_xp(monster_xp)
         print("Вы победили монстра")
         print("Вы получили" , monster_gold , "золота")
         print("Вы получили опты: ", monster_xp)
 
 
-
-def use_item(player):
-    item = input("Ввкдите предмет: ").lower()
-    if item in player["inventory"]:
-        if item == "зелье":
-            player["health"] = min(player["max_health"], player["health"] + 20)
-            player["inventory"].remove(item)
-            print("Вы выпили зелье")
-            print("Здоровье: ", player["health"])
-        elif item == "большое зелье":
-            player["health"] = min(player["max_health"], player["health"] + 20)
-            player["inventory"].remove(item)
-            print("Вы выпили зелье")
-            print("Здоровье: ", player["health"])
-        elif item in weapons:
-            player["weapon"] = item
-            print("Экипировано оружие: ", item)
-        elif item in armor:
-            player["armor"] = item
-            print("Экипировано: ", item)
-
-        elif item != "зелье":
-            print("Нельзя использовать!")
-
-
-    else:
-            print("Такого нет")
-
 def blacksmit(player):
     print("Добро пожаловать в мою кузницу, странник!")
     print("Принеси своё оружие — я осмотрю его и скажу, сколько будет стоить ремонт.")
     print("Если цена тебя устроит — верну твоему оружию прежнюю прочность!")
-    if player["weapon"] == None:
+    if player.weapon is None:
         print("Оружие не выбрано")
     else:
-       repair_weapon_price = round((100 - weapons[player["weapon"]]["durability"]) * 0.3)
-       if player["gold"] < repair_weapon_price:
+       repair_weapon_price = round((100 - weapons[player.weapon]["durability"]) * 0.3)
+       if player.gold < repair_weapon_price:
          print("Незватает золота!")
 
        else:
@@ -252,21 +236,15 @@ def blacksmit(player):
            print("Да или Нет")
            answer = input("Ваше рещение: ").lower()
            if answer == "да":
-               player["gold"] -= repair_weapon_price
-               weapons[player["weapon"]]["durability"] = 100
+               player.gold -= repair_weapon_price
+               weapons[player.weapon]["durability"] = 100
                print("Вы потратили ", repair_weapon_price, "на ремонт")
-               print("Прочность оружия: ", weapons[player["weapon"]]["durability"])
+               print("Прочность оружия: ", weapons[player.weapon]["durability"])
            elif answer == "нет":
                 return
            else:
                print("Такой выбор не допустим")
                return
-
-
-
-
-
-
 
 
 
@@ -285,21 +263,21 @@ while True:
         print("Ошибка!")
         continue
     if answer == 1:
-        show_player(player1)
+        player1.show_player()
     elif answer == 2:
         show_shop(shop)
     elif answer == 3:
         item = input("Какой предмет хочешь купить? ").lower()
-        buy_item(player1, item, shop)
+        player1.buy_item(item, shop)
     elif answer == 4:
         item = input("Какой предмет продать? ").lower()
-        sell_item(player1, item, shop)
+        player1.sell_item(item, shop)
     elif answer == 5:
         result = quest(player1)
         if result == False:
             break
     elif answer == 6:
-        use_item(player1)
+        player1.use_item(weapons, armor)
     elif answer == 7:
         blacksmit(player1)
     elif answer == 8:
