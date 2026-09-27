@@ -58,17 +58,19 @@ class player:
 
     def sell_item(self, item, shop):
         if item in self.inventory:
-            price = shop[item] / 2
+            price = shop[item] // 2
             self.gold += price
             self.inventory.remove(item)
             print("Предмет :", item, "успешно продан.")
+            if self.weapon == item:
+                self.weapon = None
             if self.armor == item:
                 self.armor = None
         else:
             print("Такого предмета нет.")
 
-    def use_item(self, weapons, armor):
-        item = input("Введите предмет: ").lower()
+    def use_item(self, item, weapons, armor):
+        item = item.lower()#input("Введите предме).lower()
 
         if item in self.inventory:
             if item == "зелье":
@@ -96,8 +98,8 @@ class player:
 
         else:
             print("Такого нет")
-player1 = player()
-player1.name = input("Введите имя героя: ")
+#player1 = player()
+#player1.name = input("Введите имя героя: ")
 
 shop = {
     "зелье": 30,
@@ -134,12 +136,6 @@ armor = {
 def show_shop(shop):
     for item, price in shop.items():
         print(item, "-", price, "золота")
-
-def spend_gold(player, amount):
-    if player["gold"] >= amount:
-        player["gold"] -= amount
-    else:
-        print(" Не хватает денег!")
 
 def quest(player):
 
@@ -220,70 +216,97 @@ def quest(player):
         print("Вы получили опты: ", monster_xp)
 
 
-def blacksmit(player):
+def blacksmit(player, answer=None):
     print("Добро пожаловать в мою кузницу, странник!")
     print("Принеси своё оружие — я осмотрю его и скажу, сколько будет стоить ремонт.")
     print("Если цена тебя устроит — верну твоему оружию прежнюю прочность!")
+
     if player.weapon is None:
         print("Оружие не выбрано")
+        return
+
+    repair_weapon_price = round(
+        (100 - weapons[player.weapon]["durability"]) * 0.3)
+
+    if player.gold < repair_weapon_price:
+        print("Незватает золота!")
+        return
+
+    print(
+        "Ремонт вашего оружия будет стоить ",
+        repair_weapon_price,
+        "золота. Согласны?")
+
+    if answer is None:
+        return
+
+    answer = answer.lower()
+
+    if answer == "да":
+        player.gold -= repair_weapon_price
+        weapons[player.weapon]["durability"] = 100
+        print("Вы потратили ", repair_weapon_price, "на ремонт")
+        print("Прочность оружия: ", weapons[player.weapon]["durability"])
+
+    elif answer == "нет":
+        return
+
     else:
-       repair_weapon_price = round((100 - weapons[player.weapon]["durability"]) * 0.3)
-       if player.gold < repair_weapon_price:
-         print("Незватает золота!")
-
-       else:
-           print("Ремонт вашего оружия будет стоить ", repair_weapon_price,"золота. Согласны?")
-           print("Да или Нет")
-           answer = input("Ваше рещение: ").lower()
-           if answer == "да":
-               player.gold -= repair_weapon_price
-               weapons[player.weapon]["durability"] = 100
-               print("Вы потратили ", repair_weapon_price, "на ремонт")
-               print("Прочность оружия: ", weapons[player.weapon]["durability"])
-           elif answer == "нет":
-                return
-           else:
-               print("Такой выбор не допустим")
-               return
+        print("Такой выбор не допустим")
 
 
 
-while True:
-    print("1. Показать персонажа:")
-    print("2. Показать магазин: ")
-    print("3. Купить предмет: ")
-    print("4. Продать предмет: ")
-    print("5. Пройти квест: ")
-    print("6. Использовать предмет: ")
-    print("7. Кузнец")
-    print("8. Выйти")
-    try:
-        answer = int(input("Выберите действие: "))
-    except ValueError:
-        print("Ошибка!")
-        continue
-    if answer == 1:
-        player1.show_player()
-    elif answer == 2:
-        show_shop(shop)
-    elif answer == 3:
-        item = input("Какой предмет хочешь купить? ").lower()
-        player1.buy_item(item, shop)
-    elif answer == 4:
-        item = input("Какой предмет продать? ").lower()
-        player1.sell_item(item, shop)
-    elif answer == 5:
-        result = quest(player1)
-        if result == False:
+def game():
+    player1 = player()
+    player1.name = input("Введите имя героя: ")
+    while True:
+        print("1. Показать персонажа:")
+        print("2. Показать магазин: ")
+        print("3. Купить предмет: ")
+        print("4. Продать предмет: ")
+        print("5. Пройти квест: ")
+        print("6. Использовать предмет: ")
+        print("7. Кузнец")
+        print("8. Выйти")
+
+        try:
+            answer = int(input("Выберите действие: "))
+        except ValueError:
+            print("Ошибка!")
+            continue
+
+        if answer == 1:
+            player1.show_player()
+
+        elif answer == 2:
+            show_shop(shop)
+
+        elif answer == 3:
+            item = input("Какой предмет хочешь купить? ").lower()
+            player1.buy_item(item, shop)
+
+        elif answer == 4:
+            item = input("Какой предмет продать? ").lower()
+            player1.sell_item(item, shop)
+
+        elif answer == 5:
+            result = quest(player1)
+            if result == False:
+                break
+
+        elif answer == 6:
+            item = input("Введите предмет: ").lower()
+            player1.use_item(item, weapons, armor)
+
+        elif answer == 7:
+            blacksmit(player1)
+
+        elif answer == 8:
             break
-    elif answer == 6:
-        player1.use_item(weapons, armor)
-    elif answer == 7:
-        blacksmit(player1)
-    elif answer == 8:
-        break
-    else:
-        print("Такого дествия нет!")
+
+        else:
+            print("Такого дествия нет!")
+game()
 
 
 
