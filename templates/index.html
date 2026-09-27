@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Моя RPG</title>
+</head>
+<body>
+
+    <h1>Моя RPG</h1>
+
+    <h2>Имя героя: {{ player.name }}</h2>
+
+    <p>Уровень: {{ player.level }}</p>
+    <p>Здоровье: {{ player.health }} / {{ player.max_health }}</p>
+    <p>Золото: {{ player.gold }}</p>
+    <p>Опыт: {{ player.xp }}</p>
+
+    <p>Оружие: {{ player.weapon }}</p>
+    <p>Броня: {{ player.armor }}</p>
+
+    <h2>Магазин</h2>
+
+    <ul>
+        {% for item, price in shop.items() %}
+            <li>
+                {{ item }} — {{ price }} золота
+
+                <form action="/buy" method="POST">
+                    <input type="hidden" name="item" value="{{ item }}">
+                    <button type="submit">Купить</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Инвентарь:</h3>
+
+    <ul>
+        {% for item in player.inventory %}
+            <li>
+                {{ item }}
+
+                <form action="/use" method="POST">
+                    <input type="hidden" name="item" value="{{ item }}">
+                    <button type="submit">Использовать</button>
+                </form>
+
+                <form action="/sell" method="POST">
+                    <input type="hidden" name="item" value="{{ item }}">
+                    <button type="submit">Продать</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Квест</h2>
+
+    <form action="/quest" method="POST">
+        <button type="submit">Пойти в квест</button>
+    </form>
+
+    {% if quest_result %}
+        <p>{{ quest_result }}</p>
+    {% endif %}
+
+</body>
+</html>

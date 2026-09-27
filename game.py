@@ -214,6 +214,7 @@ def quest(player):
         print("Вы победили монстра")
         print("Вы получили" , monster_gold , "золота")
         print("Вы получили опты: ", monster_xp)
+        return "Вы победили монстра!"
 
 
 def blacksmit(player, answer=None):
@@ -306,7 +307,6 @@ def game():
 
         else:
             print("Такого дествия нет!")
-game()
 
 
 
