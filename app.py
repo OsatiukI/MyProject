@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from game import player, shop, weapons, armor, quest
-
 app = Flask(__name__)
 
 player1 = player()
@@ -44,14 +43,9 @@ def use():
 
 @app.route("/quest", methods=["POST"])
 def quest_route():
-    result = quest(player1)
+    quest(player1)
 
-    return render_template(
-        "index.html",
-        player=player1,
-        shop=shop,
-        quest_result=result
-    )
+    return redirect("/")
 
 
 if __name__ == "__main__":
