@@ -3,20 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <title>Легенда Северных Земель</title>
+
+    <style>
+        body {
+            background-color: #17130f;
+            color: #e8dcc8;
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .player-info {
+            background-color: #211b15;
+            border: 1px solid #493a27;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .health-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #3a2525;
+            border: 1px solid #5a3a3a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background-color: #8f3030;
+        }
+
+        .monster-health-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #302525;
+            border: 1px solid #5a3a3a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .monster-health-fill {
+            height: 100%;
+            background-color: #6f3030;
+        }
+
+        .battle {
+            background-color: #211b15;
+            border: 1px solid #493a27;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #d4a85a;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: #c99545;
+            border-bottom: 1px solid #493a27;
+            padding-bottom: 8px;
+            margin-top: 35px;
+        }
+
+        h3 {
+            color: #b98b4a;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #211b15;
+            border: 1px solid #3d3020;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        button {
+            background-color: #8a642f;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background-color: #a97935;
+        }
+
+        form {
+            display: inline;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>Моя RPG</h1>
+    <h1>Легенда Северных Земель</h1>
 
-    <h2>Имя героя: {{ player.name }}</h2>
+    <div class="player-info">
 
-    <p>Уровень: {{ player.level }}</p>
-    <p>Здоровье: {{ player.health }} / {{ player.max_health }}</p>
-    <p>Золото: {{ player.gold }}</p>
-    <p>Опыт: {{ player.xp }}</p>
+        <h2>Имя героя: {{ player.name }}</h2>
 
-    <p>Оружие: {{ player.weapon }}</p>
-    <p>Броня: {{ player.armor }}</p>
+        <p>Уровень: {{ player.level }}</p>
+
+        <p>Здоровье: {{ player.health }} / {{ player.max_health }}</p>
+
+        <div class="health-bar">
+            <div
+                class="health-fill"
+                style="width: {{ (player.health / player.max_health) * 100 }}%;">
+            </div>
+        </div>
+
+        <p>Золото: {{ player.gold }}</p>
+        <p>Опыт: {{ player.xp }}</p>
+
+        <p>Оружие: {{ player.weapon }}</p>
+        <p>Броня: {{ player.armor }}</p>
+
+    </div>
+
 
     <h2>Магазин</h2>
 
@@ -33,11 +155,41 @@
         {% endfor %}
     </ul>
 
+
+    <h2>Кузница</h2>
+
+    {% if player.weapon %}
+
+        <p>Ваше оружие: {{ player.weapon }}</p>
+
+        <p>
+            Прочность:
+            {{ weapons[player.weapon]["durability"] }} / 100
+        </p>
+
+        <p>
+            Стоимость ремонта:
+            {{ ((100 - weapons[player.weapon]["durability"]) * 0.3) | round | int }}
+            золота
+        </p>
+
+        <form action="/blacksmith" method="POST">
+            <button type="submit">🔨 Починить оружие</button>
+        </form>
+
+    {% else %}
+
+        <p>У вас нет экипированного оружия.</p>
+
+    {% endif %}
+
+
     <h3>Инвентарь:</h3>
 
     <ul>
         {% for item in player.inventory %}
             <li>
+
                 {{ item }}
 
                 <form action="/use" method="POST">
@@ -49,9 +201,11 @@
                     <input type="hidden" name="item" value="{{ item }}">
                     <button type="submit">Продать</button>
                 </form>
+
             </li>
         {% endfor %}
     </ul>
+
 
     <h2>Квест</h2>
 
@@ -59,9 +213,40 @@
         <button type="submit">Пойти в квест</button>
     </form>
 
-    {% if quest_result %}
-        <p>{{ quest_result }}</p>
+
+    {% if current_monster %}
+
+        <div class="battle">
+
+            <p>Вы встретили: {{ current_monster }}</p>
+
+            <p>
+                Здоровье монстра:
+                {{ monster_health }} /
+                {{ monsters_data[current_monster]["health"] }}
+            </p>
+
+            <div class="monster-health-bar">
+                <div
+                    class="monster-health-fill"
+                    style="width: {{ (monster_health / monsters_data[current_monster]["health"]) * 100 }}%;">
+                </div>
+            </div>
+
+            {% if attack_result %}
+                <p>{{ attack_result }}</p>
+            {% endif %}
+
+            {% if not battle_finished %}
+                <form action="/attack" method="POST">
+                    <button type="submit">⚔️ Атаковать</button>
+                </form>
+            {% endif %}
+
+        </div>
+
     {% endif %}
+
 
 </body>
 </html>
