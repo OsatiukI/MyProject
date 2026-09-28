@@ -5,248 +5,842 @@
     <title>Легенда Северных Земель</title>
 
     <style>
-        body {
-            background-color: #17130f;
-            color: #e8dcc8;
-            font-family: Arial, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 30px;
+        * {
+            box-sizing: border-box;
         }
 
-        .player-info {
-            background-color: #211b15;
-            border: 1px solid #493a27;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
+        body {
+            margin: 0;
+            padding: 30px;
+            min-height: 100vh;
+
+            background-image:
+                linear-gradient(
+                    rgba(10, 8, 6, 0.45),
+                    rgba(10, 8, 6, 0.65)
+                ),
+                url("/static/fon.jpeg");
+
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+
+            color: #e8dcc8;
+            font-family: Arial, sans-serif;
         }
+
+        .game-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* =========================
+           ЗАГОЛОВОК
+        ========================= */
+
+        h1 {
+            text-align: center;
+            color: #e0b45f;
+            font-size: 36px;
+            letter-spacing: 2px;
+            margin: 10px 0 35px;
+
+            text-shadow:
+                0 2px 5px #000,
+                0 0 15px rgba(0, 0, 0, 0.8);
+        }
+
+        h2 {
+            color: #d3a052;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        h3 {
+            color: #c9964a;
+            margin-top: 0;
+        }
+
+        /* =========================
+           ОБЩИЕ ПАНЕЛИ
+        ========================= */
+
+        .panel {
+            background: rgba(25, 20, 15, 0.90);
+            border: 1px solid #624a2b;
+            border-radius: 12px;
+            padding: 20px;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.55),
+                inset 0 0 20px rgba(0, 0, 0, 0.25);
+        }
+
+        /* =========================
+           ВЕРХНЯЯ ЧАСТЬ
+        ========================= */
+
+        .top-section {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* =========================
+           ГЕРОЙ
+        ========================= */
+
+        .player-info {
+            min-height: 300px;
+        }
+
+        .player-name {
+            color: #e1b15a;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid #493823;
+            border-radius: 6px;
+            padding: 9px;
+        }
+
+        /* =========================
+           ПОЛОСКА ЗДОРОВЬЯ
+        ========================= */
 
         .health-bar {
             width: 100%;
-            height: 20px;
-            background-color: #3a2525;
-            border: 1px solid #5a3a3a;
+            height: 22px;
+
+            background: #241818;
+            border: 1px solid #5d3939;
             border-radius: 10px;
+
             overflow: hidden;
+            margin-top: 8px;
         }
 
         .health-fill {
             height: 100%;
-            background-color: #8f3030;
+            background: #9d3434;
+
+            transition: width 0.3s ease;
+        }
+
+        .health-text {
+            text-align: center;
+            margin-top: 6px;
+            font-size: 14px;
+        }
+
+        /* =========================
+           БОЙ
+        ========================= */
+
+        .battle {
+            min-height: 300px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(90, 35, 25, 0.25),
+                    rgba(15, 10, 8, 0.9)
+                );
+
+            border: 1px solid #75452d;
+
+            box-shadow:
+                0 0 25px rgba(0, 0, 0, 0.8),
+                inset 0 0 30px rgba(80, 30, 20, 0.15);
+        }
+
+        .battle-empty {
+            text-align: center;
+            color: #9e927f;
+            padding: 40px 10px;
+        }
+
+        /* =========================
+           КАРТОЧКА МОНСТРА
+        ========================= */
+
+        .monster-card {
+            background:
+                linear-gradient(
+                    rgba(40, 17, 14, 0.65),
+                    rgba(15, 9, 8, 0.75)
+                );
+
+            border: 1px solid #713b30;
+            border-radius: 10px;
+
+            padding: 20px;
+
+            box-shadow:
+                inset 0 0 25px rgba(80, 20, 15, 0.2),
+                0 5px 15px rgba(0, 0, 0, 0.35);
+        }
+
+        .monster-name {
+            text-align: center;
+
+            color: #df7055;
+
+            font-size: 30px;
+            font-weight: bold;
+
+            margin-bottom: 18px;
+
+            text-shadow:
+                0 2px 4px #000,
+                0 0 12px rgba(150, 40, 25, 0.5);
+        }
+
+        .monster-health-title {
+            text-align: center;
+            color: #bcae9b;
+            margin-bottom: 8px;
         }
 
         .monster-health-bar {
             width: 100%;
-            height: 20px;
-            background-color: #302525;
-            border: 1px solid #5a3a3a;
-            border-radius: 10px;
+            height: 26px;
+
+            background: #241818;
+            border: 1px solid #643b3b;
+            border-radius: 13px;
+
             overflow: hidden;
+
+            box-shadow:
+                inset 0 0 8px rgba(0, 0, 0, 0.8);
         }
 
         .monster-health-fill {
             height: 100%;
-            background-color: #6f3030;
+            background:
+                linear-gradient(
+                    #9d3838,
+                    #682323
+                );
+
+            transition: width 0.3s ease;
         }
 
-        .battle {
-            background-color: #211b15;
-            border: 1px solid #493a27;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 25px;
-        }
-
-        h1 {
+        .monster-health-text {
             text-align: center;
-            color: #d4a85a;
-            margin-bottom: 40px;
+            margin-top: 8px;
+
+            color: #d9cbb8;
+            font-weight: bold;
         }
 
-        h2 {
-            color: #c99545;
-            border-bottom: 1px solid #493a27;
-            padding-bottom: 8px;
-            margin-top: 35px;
+        /* =========================
+           РЕЗУЛЬТАТ АТАКИ
+        ========================= */
+
+        .attack-result {
+            background: rgba(0, 0, 0, 0.45);
+
+            border: 1px solid #62482d;
+            border-radius: 8px;
+
+            padding: 13px;
+            margin-top: 18px;
+
+            text-align: center;
+
+            color: #e6d7bd;
+
+            box-shadow:
+                inset 0 0 12px rgba(0, 0, 0, 0.3);
         }
 
-        h3 {
-            color: #b98b4a;
-        }
-
-        p {
-            font-size: 16px;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            background-color: #211b15;
-            border: 1px solid #3d3020;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-        }
+        /* =========================
+           КНОПКИ
+        ========================= */
 
         button {
-            background-color: #8a642f;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 5px;
+            background: linear-gradient(
+                #9b7138,
+                #654820
+            );
+
+            color: #fff5df;
+
+            border: 1px solid #bd9150;
+            border-radius: 6px;
+
+            padding: 9px 16px;
+            margin-top: 7px;
+
             cursor: pointer;
-            margin-top: 5px;
+            font-size: 14px;
+
+            transition: 0.2s;
         }
 
         button:hover {
-            background-color: #a97935;
+            background: linear-gradient(
+                #b68745,
+                #795628
+            );
+
+            transform: translateY(-1px);
+        }
+
+        .attack-button {
+            display: block;
+            margin: 20px auto 0;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            padding: 12px 35px;
+
+            background: linear-gradient(
+                #9b3d2e,
+                #60241d
+            );
+
+            border: 1px solid #c05a45;
+
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .attack-button:hover {
+            background: linear-gradient(
+                #b54b38,
+                #762a21
+            );
+
+            box-shadow:
+                0 5px 15px rgba(100, 30, 20, 0.5);
         }
 
         form {
             display: inline;
+        }
+
+        /* =========================
+           НИЖНЯЯ ЧАСТЬ
+        ========================= */
+
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* =========================
+           ИНВЕНТАРЬ
+        ========================= */
+
+        .inventory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .inventory-item {
+            background: rgba(0, 0, 0, 0.28);
+
+            border: 1px solid #493823;
+            border-radius: 7px;
+
+            padding: 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .inventory-buttons {
+            white-space: nowrap;
+        }
+
+        /* =========================
+           КУЗНИЦА
+        ========================= */
+
+        .blacksmith-info {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid #493823;
+            border-radius: 7px;
+
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .durability-bar {
+            width: 100%;
+            height: 16px;
+
+            background: #29251e;
+            border: 1px solid #51432e;
+            border-radius: 8px;
+
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .durability-fill {
+            height: 100%;
+            background: #9a763d;
+        }
+
+        /* =========================
+           МАГАЗИН
+        ========================= */
+
+        .shop-panel {
+            margin-bottom: 20px;
+        }
+
+        .shop-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .shop-item {
+            background: rgba(0, 0, 0, 0.28);
+
+            border: 1px solid #493823;
+            border-radius: 7px;
+
+            padding: 10px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .shop-price {
+            color: #d5ae5e;
+        }
+
+        /* =========================
+           КВЕСТ
+        ========================= */
+
+        .quest-panel {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .quest-button {
+            font-size: 16px;
+            padding: 11px 25px;
+        }
+
+        /* =========================
+           АДАПТАЦИЯ
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .top-section,
+            .bottom-section {
+                grid-template-columns: 1fr;
+            }
+
+            .shop-list {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .inventory-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .inventory-buttons {
+                white-space: normal;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Легенда Северных Земель</h1>
+<div class="game-container">
 
-    <div class="player-info">
+    <h1>⚔ Легенда Северных Земель ⚔</h1>
 
-        <h2>Имя героя: {{ player.name }}</h2>
 
-        <p>Уровень: {{ player.level }}</p>
+    <!-- =========================
+         ГЕРОЙ + БОЙ
+    ========================= -->
 
-        <p>Здоровье: {{ player.health }} / {{ player.max_health }}</p>
+    <div class="top-section">
 
-        <div class="health-bar">
-            <div
-                class="health-fill"
-                style="width: {{ (player.health / player.max_health) * 100 }}%;">
+        <!-- ГЕРОЙ -->
+
+        <div class="panel player-info">
+
+            <h2>Герой</h2>
+
+            <div class="player-name">
+                {{ player.name }}
             </div>
+
+            <p>
+                Уровень:
+                <strong>{{ player.level }}</strong>
+            </p>
+
+            <p>Здоровье</p>
+
+            <div class="health-bar">
+
+                <div
+                    class="health-fill"
+                    style="width: {{ (player.health / player.max_health) * 100 }}%;">
+                </div>
+
+            </div>
+
+            <div class="health-text">
+                {{ player.health }} / {{ player.max_health }}
+            </div>
+
+
+            <div class="player-stats">
+
+                <div class="stat">
+                    💰 Золото: {{ player.gold }}
+                </div>
+
+                <div class="stat">
+                    ⭐ Опыт: {{ player.xp }}
+                </div>
+
+                <div class="stat">
+                    ⚔ Оружие:
+                    {{ player.weapon or "Нет" }}
+                </div>
+
+                <div class="stat">
+                    🛡 Броня:
+                    {{ player.armor or "Нет" }}
+                </div>
+
+            </div>
+
         </div>
 
-        <p>Золото: {{ player.gold }}</p>
-        <p>Опыт: {{ player.xp }}</p>
 
-        <p>Оружие: {{ player.weapon }}</p>
-        <p>Броня: {{ player.armor }}</p>
+        <!-- БОЙ -->
+
+        <div class="panel battle">
+
+            {% if current_monster %}
+
+                <div class="monster-card">
+
+                    <div class="monster-name">
+                        👹 {{ current_monster|capitalize }}
+                    </div>
+
+                    <div class="monster-health-title">
+                        Здоровье монстра
+                    </div>
+
+                    <div class="monster-health-bar">
+
+                        <div
+                            class="monster-health-fill"
+                            style="width: {{ (monster_health / monsters_data[current_monster]['health']) * 100 }}%;">
+                        </div>
+
+                    </div>
+
+                    <div class="monster-health-text">
+                        {{ monster_health }} /
+                        {{ monsters_data[current_monster]['health'] }}
+                    </div>
+
+
+                    {% if attack_result %}
+
+                        <div class="attack-result">
+                            {{ attack_result }}
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if not battle_finished %}
+
+                        <form action="/attack" method="POST">
+
+                            <button
+                                type="submit"
+                                class="attack-button">
+                                ⚔️ Атаковать
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            {% else %}
+
+                <div class="battle-empty">
+
+                    <h2>Поле боя</h2>
+
+                    <p>
+                        Здесь пока никого нет.
+                    </p>
+
+                    <p>
+                        Отправляйтесь в квест,
+                        чтобы встретить противника.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
 
     </div>
 
 
-    <h2>Магазин</h2>
+    <!-- =========================
+         ИНВЕНТАРЬ + КУЗНИЦА
+    ========================= -->
 
-    <ul>
-        {% for item, price in shop.items() %}
-            <li>
-                {{ item }} — {{ price }} золота
-
-                <form action="/buy" method="POST">
-                    <input type="hidden" name="item" value="{{ item }}">
-                    <button type="submit">Купить</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="bottom-section">
 
 
-    <h2>Кузница</h2>
+        <!-- ИНВЕНТАРЬ -->
 
-    {% if player.weapon %}
+        <div class="panel">
 
-        <p>Ваше оружие: {{ player.weapon }}</p>
+            <h2>🎒 Инвентарь</h2>
 
-        <p>
-            Прочность:
-            {{ weapons[player.weapon]["durability"] }} / 100
-        </p>
+            {% if player.inventory %}
 
-        <p>
-            Стоимость ремонта:
-            {{ ((100 - weapons[player.weapon]["durability"]) * 0.3) | round | int }}
-            золота
-        </p>
+                <div class="inventory-list">
 
-        <form action="/blacksmith" method="POST">
-            <button type="submit">🔨 Починить оружие</button>
-        </form>
+                    {% for item in player.inventory %}
 
-    {% else %}
+                        <div class="inventory-item">
 
-        <p>У вас нет экипированного оружия.</p>
+                            <span>
+                                {{ item }}
+                            </span>
 
-    {% endif %}
+                            <div class="inventory-buttons">
 
+                                <form action="/use" method="POST">
 
-    <h3>Инвентарь:</h3>
+                                    <input
+                                        type="hidden"
+                                        name="item"
+                                        value="{{ item }}">
 
-    <ul>
-        {% for item in player.inventory %}
-            <li>
+                                    <button type="submit">
+                                        Использовать
+                                    </button>
 
-                {{ item }}
-
-                <form action="/use" method="POST">
-                    <input type="hidden" name="item" value="{{ item }}">
-                    <button type="submit">Использовать</button>
-                </form>
-
-                <form action="/sell" method="POST">
-                    <input type="hidden" name="item" value="{{ item }}">
-                    <button type="submit">Продать</button>
-                </form>
-
-            </li>
-        {% endfor %}
-    </ul>
+                                </form>
 
 
-    <h2>Квест</h2>
+                                <form action="/sell" method="POST">
 
-    <form action="/quest" method="POST">
-        <button type="submit">Пойти в квест</button>
-    </form>
+                                    <input
+                                        type="hidden"
+                                        name="item"
+                                        value="{{ item }}">
 
+                                    <button type="submit">
+                                        Продать
+                                    </button>
 
-    {% if current_monster %}
+                                </form>
 
-        <div class="battle">
+                            </div>
 
-            <p>Вы встретили: {{ current_monster }}</p>
+                        </div>
 
-            <p>
-                Здоровье монстра:
-                {{ monster_health }} /
-                {{ monsters_data[current_monster]["health"] }}
-            </p>
+                    {% endfor %}
 
-            <div class="monster-health-bar">
-                <div
-                    class="monster-health-fill"
-                    style="width: {{ (monster_health / monsters_data[current_monster]["health"]) * 100 }}%;">
                 </div>
-            </div>
 
-            {% if attack_result %}
-                <p>{{ attack_result }}</p>
-            {% endif %}
+            {% else %}
 
-            {% if not battle_finished %}
-                <form action="/attack" method="POST">
-                    <button type="submit">⚔️ Атаковать</button>
-                </form>
+                <p>
+                    Инвентарь пуст.
+                </p>
+
             {% endif %}
 
         </div>
 
-    {% endif %}
 
+        <!-- КУЗНИЦА -->
+
+        <div class="panel">
+
+            <h2>🔨 Кузница</h2>
+
+            {% if player.weapon %}
+
+                <div class="blacksmith-info">
+
+                    <p>
+                        Оружие:
+                        <strong>{{ player.weapon }}</strong>
+                    </p>
+
+                    <p>
+                        Прочность:
+                        {{ weapons[player.weapon]["durability"] }}
+                        / 100
+                    </p>
+
+                    <div class="durability-bar">
+
+                        <div
+                            class="durability-fill"
+                            style="width: {{ weapons[player.weapon]['durability'] }}%;">
+                        </div>
+
+                    </div>
+
+                    <p>
+                        Стоимость ремонта:
+                        <strong>
+                            {{ ((100 - weapons[player.weapon]["durability"]) * 0.3) | round | int }}
+                        </strong>
+                        золота
+                    </p>
+
+                </div>
+
+
+                <form action="/blacksmith" method="POST">
+
+                    <button type="submit">
+                        🔨 Починить оружие
+                    </button>
+
+                </form>
+
+            {% else %}
+
+                <p>
+                    У вас нет экипированного оружия.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         КВЕСТ
+    ========================= -->
+
+    <div class="panel quest-panel">
+
+        <h2>🗺 Квест</h2>
+
+        <p>
+            Отправляйтесь исследовать Северные Земли.
+        </p>
+
+        <form action="/quest" method="POST">
+
+            <button
+                type="submit"
+                class="quest-button">
+                🗺 Пойти в квест
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =========================
+         МАГАЗИН
+    ========================= -->
+
+    <div class="panel shop-panel">
+
+        <h2>🛒 Магазин</h2>
+
+        <div class="shop-list">
+
+            {% for item, price in shop.items() %}
+
+                <div class="shop-item">
+
+                    <span>
+                        {{ item }}
+                    </span>
+
+                    <span class="shop-price">
+                        {{ price }} 💰
+                    </span>
+
+                    <form action="/buy" method="POST">
+
+                        <input
+                            type="hidden"
+                            name="item"
+                            value="{{ item }}">
+
+                        <button type="submit">
+                            Купить
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
