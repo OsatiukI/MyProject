@@ -1,7 +1,15 @@
 while True:
-    num_first = float(input("Введите первое число: "))
+    try:
+        num_first = float(input("Введите первое число: "))
+    except ValueError:
+        print("Ввелите число!")
+        continue
     operator = input("Введите операцию (+, -, *, /): ")
-    num_second = float(input("Введите второе число: "))
+    try:
+        num_second = float(input("Введите второе число: "))
+    except ValueError:
+        print("Ввелите число!")
+        continue
 
     if operator == "+":
       result = num_first+ num_second
@@ -18,3 +26,8 @@ while True:
         print("Неизвестная операция")
         continue
     print(result)
+    answer = input("Продолжить? д или н?").lower()
+    if answer =="д":
+        continue
+    else:
+        break
