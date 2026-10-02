@@ -26,8 +26,6 @@ while True:
         print("Неизвестная операция")
         continue
     print(result)
-    answer = input("Продолжить? д или н?").lower()
-    if answer =="д":
-        continue
-    else:
+    answer = input("Продолжить? yes или y? ").lower()
+    if answer != "yes" and answer != "y":
         break
