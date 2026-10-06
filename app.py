@@ -1,6 +1,6 @@
 import random
 from flask import Flask, render_template, request, redirect
-from game import player, shop, weapons, armor, quest, monsters, monsters_data
+from game import player, shop, weapons, armor, quest, monsters, monsters_data, quests
 
 app = Flask(__name__)
 
@@ -11,6 +11,7 @@ current_monster = None
 monster_health = None
 attack_result = None
 battle_finished = False
+current_quest = None
 
 @app.route("/")
 @app.route("/")
@@ -24,7 +25,8 @@ def index():
         monsters_data=monsters_data,
         monster_health=monster_health,
         attack_result=attack_result,
-        battle_finished=battle_finished
+        battle_finished=battle_finished,
+        current_quest=current_quest,
     )
 
 
@@ -104,12 +106,15 @@ def blacksmith_route():
 
 @app.route("/quest", methods=["POST"])
 def quest_route():
+    global current_quest
     global current_monster
     global monster_health
     global battle_finished
     global attack_result
 
-    current_monster = random.choice(monsters)
+    current_quest = random.choice(quests[player1.level])
+
+    current_monster = random.choice(current_quest["monster"])
     monster_health = monsters_data[current_monster]["health"]
 
     battle_finished = False

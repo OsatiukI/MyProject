@@ -98,8 +98,6 @@ class player:
 
         else:
             print("Такого нет")
-#player1 = player()
-#player1.name = input("Введите имя героя: ")
 
 shop = {
     "зелье": 30,
@@ -127,6 +125,31 @@ monsters_data = {
     "трупоед": {"health": 80, "damage": 17, "xp": 15, "gold": 50, "miss_chance": 10, "critical_hit_chance_m": 10},
     "кикимора": {"health": 85, "damage": 20, "xp": 15, "gold": 40, "miss_chance": 15, "critical_hit_chance_m": 12}
 }
+quests = {
+    1: [
+        {
+            "name": "Волки у деревни",
+            "monster": ["волк", "гоблин"]
+        },
+        {
+            "name": "Опасная дорога",
+            "monster": ["гоблин", "трупоед"]
+        }
+    ],
+
+    2: [
+        {
+            "name": "Тёмная пещера",
+            "monster": ["трупоед", "кикимора"]
+        }
+    ],
+    3: [
+        {
+            "name": "Логово дракона",
+            "monster": ["дракон"]
+        }
+    ]
+}
 armor = {
     "шлем": 10,
     "броня": 50,
@@ -138,13 +161,12 @@ def show_shop(shop):
         print(item, "-", price, "золота")
 
 def quest(player):
-
         print("Вы отпавились в лес")
         if player.armor is None:
             player_defense = 0
         else:
             player_defense = armor[player.armor]
-        monster = random.choice(monsters)
+        current_monster = random.choice(monsters)
         print("Вы встретили", monster)
         monster_stats = monsters_data[monster]
         monster_health = monster_stats["health"]
