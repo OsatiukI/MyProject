@@ -1,4 +1,57 @@
+import json
+
+
+def delete_transaction():
+    if transactions == []:
+        print("No transactions")
+    else:
+        for number, transaction in enumerate(transactions, 1):
+            print(f"{number} : {transaction['transaction_type'].capitalize()}, Amount: {transaction['amount']:.2f}, Category: {transaction['category']}, Description: {transaction['description']}")
+        print("Which transaction do you want to delete?: ", )
+        answer = input("Enter your choice: ")
+        try:
+            choice = int(answer)
+        except ValueError:
+            print("Invalid input")
+            return
+        if choice <= 0 or choice > len(transactions):
+            print("Invalid choice")
+        else:
+            del_transaction = transactions.pop(choice - 1)
+            print("Transaction deleted successfully!")
+            print(f"Type: {del_transaction['transaction_type'].capitalize()}")
+            print(f"Amount: {del_transaction['amount']:.2f}")
+            print(f"Category: {del_transaction['category']}")
+            print(f"Description: {del_transaction['description']}")
+            save_transactions()
+
+
+
+
+def load_transactions():
+    try:
+        with open("transactions.json", "r") as file:
+            transactions = json.load(file)
+        data_loaded = True
+    except FileNotFoundError:
+        transactions = []
+        data_loaded = True
+    except json.decoder.JSONDecodeError:
+        print("Error: transactions.json is corrupted. Restore the file before continuing.")
+        transactions = []
+        data_loaded = False
+    return transactions, data_loaded
+
+
+def save_transactions():
+    with open("transactions.json", "w") as file:
+        json.dump(transactions, file)
+
+
 def add_transaction():
+    if not data_loaded:
+        print("Cannot add transaction: data file could not be loaded")
+        return
     transaction_type = input("Type of transaction: ")
     if transaction_type not in ("income", "expense"):
         print("Invalid transaction type")
@@ -21,6 +74,8 @@ def add_transaction():
     description = input("Description: ")
     new_dict = {"transaction_type": transaction_type, "amount": amount, "category": category, "description": description}
     transactions.append(new_dict)
+    save_transactions()
+
 
 
 def calculate_balance():
@@ -51,7 +106,7 @@ def calculate_expenses_by_category(category):
     return total_expenses
 
 
-transactions = []
+transactions, data_loaded = load_transactions()
 
 while True:
     print("1. Add transaction")
@@ -59,7 +114,8 @@ while True:
     print("3. Show balance")
     print("4. Show total expenses")
     print("5. Show expenses by category")
-    print("6. Exit")
+    print("6. Delete transaction")
+    print("7. Exit")
     choice = input("Enter your choice: ")
     if choice == "1":
         add_transaction()
@@ -84,8 +140,9 @@ while True:
         expenses = calculate_expenses_by_category(answer)
         print(f"Expenses for {answer}: {expenses:.2f}")
     elif choice == "6":
+        delete_transaction()
+    elif choice == "7":
         break
     else:
         print("Invalid choice")
-
 
