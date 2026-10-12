@@ -1,6 +1,75 @@
 import json
 
 
+def edit_transaction():
+    if transactions == []:
+        print("No transactions")
+    else:
+        for number, transaction in enumerate(transactions, 1):
+            print(f"{number}")
+            print(f"Type: {transaction['transaction_type'].capitalize()}")
+            print(f"Amount: {transaction['amount']:.2f}")
+            print(f"Category: {transaction['category']}")
+            print(f"Description: {transaction['description']}")
+            print("-" * 25)
+        answer = input("Enter your choice: ")
+        try:
+            choice = int(answer)
+        except ValueError:
+            print("Invalid input")
+            return
+        if choice <= 0 or choice > len(transactions):
+            print("Invalid choice")
+            return
+        else:
+            selected_transaction = transactions[choice - 1]
+            print("1. Type")
+            print("2. Amount")
+            print("3. Category")
+            print("4. Description")
+            field_answer = input("Which field do you want to edit? ")
+            try:
+                field_choice = int(field_answer)
+            except ValueError:
+                print("Invalid input")
+                return
+            if field_choice <=0 or field_choice > 4:
+                print("Invalid choice")
+                return
+            if field_choice == 1:
+                answer_type = input("Type of field: ")
+                if answer_type not in ("income", "expense"):
+                    print("Invalid type")
+                    return
+                selected_transaction["transaction_type"] = answer_type
+            if field_choice == 2:
+                try:
+                    answer_amount = float(input("Amount: "))
+                except ValueError:
+                    print("Invalid input")
+                    return
+                if answer_amount <= 0:
+                    print("Invalid amount")
+                    return
+                selected_transaction["amount"] = answer_amount
+            if field_choice == 3:
+                 amswer_category = input("Category: ")
+                 amswer_category = amswer_category.strip()
+                 if not amswer_category:
+                     print("Category cannot be empty")
+                     return
+                 selected_transaction["category"] = amswer_category
+            if field_choice == 4:
+                amswer_description = input("Description: ")
+                amswer_description = amswer_description.strip()
+                if not amswer_description:
+                    print("Description cannot be empty")
+                    return
+                selected_transaction["description"] = amswer_description
+            save_transactions()
+            print("Transaction updated successfully!")
+
+
 def delete_transaction():
     if transactions == []:
         print("No transactions")
@@ -24,8 +93,6 @@ def delete_transaction():
             print(f"Category: {del_transaction['category']}")
             print(f"Description: {del_transaction['description']}")
             save_transactions()
-
-
 
 
 def load_transactions():
@@ -77,7 +144,6 @@ def add_transaction():
     save_transactions()
 
 
-
 def calculate_balance():
     balance = 0
     for transaction in transactions:
@@ -115,7 +181,8 @@ while True:
     print("4. Show total expenses")
     print("5. Show expenses by category")
     print("6. Delete transaction")
-    print("7. Exit")
+    print("7. Edit transaction")
+    print("8. Exit")
     choice = input("Enter your choice: ")
     if choice == "1":
         add_transaction()
@@ -142,6 +209,8 @@ while True:
     elif choice == "6":
         delete_transaction()
     elif choice == "7":
+        edit_transaction()
+    elif choice == "8":
         break
     else:
         print("Invalid choice")
