@@ -1,17 +1,21 @@
 import json
 
 
+def display_transactions():
+    for number, transaction in enumerate(transactions, 1):
+        print(f"{number}")
+        print(f"Type: {transaction['transaction_type'].capitalize()}")
+        print(f"Amount: {transaction['amount']:.2f}")
+        print(f"Category: {transaction['category']}")
+        print(f"Description: {transaction['description']}")
+        print("-" * 25)
+
+
 def edit_transaction():
     if transactions == []:
         print("No transactions")
     else:
-        for number, transaction in enumerate(transactions, 1):
-            print(f"{number}")
-            print(f"Type: {transaction['transaction_type'].capitalize()}")
-            print(f"Amount: {transaction['amount']:.2f}")
-            print(f"Category: {transaction['category']}")
-            print(f"Description: {transaction['description']}")
-            print("-" * 25)
+        display_transactions()
         answer = input("Enter your choice: ")
         try:
             choice = int(answer)
@@ -74,8 +78,7 @@ def delete_transaction():
     if transactions == []:
         print("No transactions")
     else:
-        for number, transaction in enumerate(transactions, 1):
-            print(f"{number} : {transaction['transaction_type'].capitalize()}, Amount: {transaction['amount']:.2f}, Category: {transaction['category']}, Description: {transaction['description']}")
+        display_transactions()
         print("Which transaction do you want to delete?: ", )
         answer = input("Enter your choice: ")
         try:
@@ -190,12 +193,7 @@ while True:
         if not transactions:
             print("No transactions")
         else:
-            for transaction in transactions:
-                print(f"Type: {transaction['transaction_type'].capitalize()}")
-                print(f"Amount: {transaction['amount']:.2f}")
-                print(f"Category: {transaction['category']}")
-                print(f"Description: {transaction['description']}")
-                print("-" * 25)
+            display_transactions()
     elif choice == "3":
         balance = calculate_balance()
         print(f"Current balance: {balance:.2f}")
