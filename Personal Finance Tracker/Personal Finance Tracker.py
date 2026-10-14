@@ -1,4 +1,37 @@
 import json
+import math
+
+
+def validate_transaction(transaction):
+    if not isinstance(transaction, dict):
+        return False
+    if not all(key in transaction for key in ["transaction_type", "amount", "category", "description"]):
+        return False
+    if transaction["transaction_type"] not in ("income", "expense"):
+        return False
+    if isinstance(transaction["amount"], bool):
+        return False
+    if not isinstance(transaction["amount"], (int, float)):
+        return False
+    if not math.isfinite(transaction["amount"]):
+        return False
+    if transaction["amount"] <= 0:
+        return False
+    if not isinstance(transaction["category"], str) or not transaction["category"].strip():
+        return False
+    if not isinstance(transaction["description"], str) or not transaction["description"].strip():
+        return False
+    return True
+
+
+
+
+def calculate_income():
+    total = 0
+    for transaction in transactions:
+        if transaction["transaction_type"] == "income":
+            total += transaction["amount"]
+    return total
 
 
 def display_transactions():
@@ -12,7 +45,10 @@ def display_transactions():
 
 
 def edit_transaction():
-    if transactions == []:
+    if not data_loaded:
+        print("Cannot modify transactions: data file could not be loaded")
+        return
+    elif transactions == []:
         print("No transactions")
     else:
         display_transactions()
@@ -52,30 +88,33 @@ def edit_transaction():
                 except ValueError:
                     print("Invalid input")
                     return
-                if answer_amount <= 0:
+                if not math.isfinite(answer_amount) or answer_amount <= 0:
                     print("Invalid amount")
                     return
                 selected_transaction["amount"] = answer_amount
             if field_choice == 3:
-                 amswer_category = input("Category: ")
-                 amswer_category = amswer_category.strip()
-                 if not amswer_category:
+                 answer_category = input("Category: ")
+                 answer_category = answer_category.strip()
+                 if not answer_category:
                      print("Category cannot be empty")
                      return
-                 selected_transaction["category"] = amswer_category
+                 selected_transaction["category"] = answer_category
             if field_choice == 4:
-                amswer_description = input("Description: ")
-                amswer_description = amswer_description.strip()
-                if not amswer_description:
+                answer_description = input("Description: ")
+                answer_description = answer_description.strip()
+                if not answer_description:
                     print("Description cannot be empty")
                     return
-                selected_transaction["description"] = amswer_description
+                selected_transaction["description"] = answer_description
             save_transactions()
             print("Transaction updated successfully!")
 
 
 def delete_transaction():
-    if transactions == []:
+    if not data_loaded:
+        print("Cannot modify transactions: data file could not be loaded")
+        return
+    elif transactions == []:
         print("No transactions")
     else:
         display_transactions()
@@ -102,6 +141,12 @@ def load_transactions():
     try:
         with open("transactions.json", "r") as file:
             transactions = json.load(file)
+        if not isinstance(transactions, list):
+            print("Error: transactions.json must contain a list.")
+            return [], False
+        if not all(validate_transaction(transaction) for transaction in transactions):
+            print("Error: transactions.json contains invalid transactions.")
+            return [], False
         data_loaded = True
     except FileNotFoundError:
         transactions = []
@@ -129,19 +174,24 @@ def add_transaction():
     while True:
         try:
             amount = float(input("Amount: "))
-            if amount <= 0:
+            if not math.isfinite(amount) or amount <= 0:
                 print("Invalid amount")
             else:
                 break
         except ValueError:
             print("Invalid amount")
     while True:
-        category = input("Category: ")
-        if category.strip() == "":
+        category = input("Category: ").strip()
+        if not category:
             print("Invalid category")
         else:
             break
-    description = input("Description: ")
+    while True:
+        description = input("Description: ").strip()
+        if not description:
+            print("Invalid description")
+        else:
+            break
     new_dict = {"transaction_type": transaction_type, "amount": amount, "category": category, "description": description}
     transactions.append(new_dict)
     save_transactions()
@@ -176,40 +226,42 @@ def calculate_expenses_by_category(category):
 
 
 transactions, data_loaded = load_transactions()
+if __name__ == "__main__":
+    while True:
+        print("1. Add transaction")
+        print("2. Show transactions")
+        print("3. Show balance")
+        print("4. Show total expenses")
+        print("5. Show expenses by category")
+        print("6. Delete transaction")
+        print("7. Edit transaction")
+        print("8. Exit")
 
-while True:
-    print("1. Add transaction")
-    print("2. Show transactions")
-    print("3. Show balance")
-    print("4. Show total expenses")
-    print("5. Show expenses by category")
-    print("6. Delete transaction")
-    print("7. Edit transaction")
-    print("8. Exit")
-    choice = input("Enter your choice: ")
-    if choice == "1":
-        add_transaction()
-    elif choice == "2":
-        if not transactions:
-            print("No transactions")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            add_transaction()
+        elif choice == "2":
+            if not transactions:
+                print("No transactions")
+            else:
+                display_transactions()
+        elif choice == "3":
+            balance = calculate_balance()
+            print(f"Current balance: {balance:.2f}")
+        elif choice == "4":
+            expenses = calculate_expenses()
+            print(f"Total expenses: {expenses:.2f}")
+        elif choice == "5":
+            answer = input("Select a category: ")
+            expenses = calculate_expenses_by_category(answer)
+            print(f"Expenses for {answer}: {expenses:.2f}")
+        elif choice == "6":
+            delete_transaction()
+        elif choice == "7":
+            edit_transaction()
+        elif choice == "8":
+            break
         else:
-            display_transactions()
-    elif choice == "3":
-        balance = calculate_balance()
-        print(f"Current balance: {balance:.2f}")
-    elif choice == "4":
-        expenses = calculate_expenses()
-        print(f"Total expenses: {expenses:.2f}")
-    elif choice == "5":
-        answer = input("Select a category: ")
-        expenses = calculate_expenses_by_category(answer)
-        print(f"Expenses for {answer}: {expenses:.2f}")
-    elif choice == "6":
-        delete_transaction()
-    elif choice == "7":
-        edit_transaction()
-    elif choice == "8":
-        break
-    else:
-        print("Invalid choice")
+            print("Invalid choice")
 
