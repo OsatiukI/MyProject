@@ -4,10 +4,10 @@ from person import Person
 
 class Database:
 
-    def __init__(self, db_name="people.db"):
+    def __init__(self, db_name="people.db"):   #Инициализация объекта базы данных
         self.db_name = db_name
 
-    def connect(self):
+    def connect(self):  #Подключение к SQLite
         return sqlite3.connect(self.db_name)
 
 
