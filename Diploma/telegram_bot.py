@@ -8,6 +8,8 @@ from aiogram.filters import CommandStart, Command   # ыильтры коман�
 from aiogram.types import Message, BotCommand  #BotCommand — объект, описывающий команду, которую мы хотим добавить в меню Telegram
 from database import Database  #Это уже импорт из нашего собственного проекта
 from person import Person  #Подключаем класс Person из нашего файла person.py
+from datetime import date # иморт даты
+
 
 
 # Загружаем токен из файла .env
@@ -64,17 +66,27 @@ def format_person(person):
     last_name = person[2] or ""
     middle_name = person[3] or ""
     birth_date = person[4]
-
+    death_date = person[5]
+    gender = person[6]
     full_name = " ".join(
         part for part in
         [last_name, first_name, middle_name]
         if part
     )
-
+    person_object = Person(
+        first_name=first_name,
+        birth_date=date.fromisoformat(birth_date),
+        last_name=last_name or None,
+        middle_name=middle_name or None,
+        death_date=date.fromisoformat(death_date) if death_date else None,
+        gender=gender
+    )
+    age = person_object.calculate_age()
     return (
         f"ID: {person_id}\n"
         f"Имя: {full_name}\n"
-        f"Дата рождения: {birth_date}\n\n"
+        f"Дата рождения: {birth_date}\n"
+        f"Возраст: {age} лет\n\n"
     )
 
 

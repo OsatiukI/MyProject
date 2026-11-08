@@ -3,14 +3,22 @@ from datetime import datetime, date
 
 class Person:
 
-    def __init__(self, first_name, birth_date, death_date=None, gender=None):
+    def __init__(self, first_name, birth_date, last_name=None,
+                 middle_name=None, death_date=None, gender=None):
         self.first_name = self.validate_name(first_name)
-        self.last_name = None
-        self.middle_name = None
+        self.last_name = self.validate_optional_name(last_name)
+        self.middle_name = self.validate_optional_name(middle_name)
         self.birth_date = self.parse_date(birth_date)
         self.death_date = self.parse_date(death_date)
         self.validate_dates()
         self.gender = self.parse_gender(gender)
+
+
+    @staticmethod
+    def validate_optional_name(name):
+        if name is None or not name.strip():
+            return None
+        return name.strip()
 
 
     def validate_name(self, first_name):
@@ -80,3 +88,7 @@ class Person:
         if (end_date.month, end_date.day) < (self.birth_date.month, self.birth_date.day):
             age -= 1
         return age
+
+    def get_full_name(self):
+        parts = [self.first_name, self.last_name, self.middle_name]
+        return " ".join(part for part in parts if part)

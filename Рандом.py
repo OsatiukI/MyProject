@@ -4,8 +4,8 @@ record = 7
 
 while play == "д":
  import random
- secret = random.randint(1, 10)
- print("Я загадал число от 1 до 10, попробуй его угадать: ")
+ secret = random.randint(1, 100)
+ print("Я загадал число от 1 до 100, попробуй его угадать: ")
  answer = 0
  tries = 0
  max_tries = 7
